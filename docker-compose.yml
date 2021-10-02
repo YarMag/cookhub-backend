@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  cookhub-rest-server:
+    build:
+      context: .
+    container_name: cookhub-rest-server
+    hostname: cookhub-rest-server
+    networks:
+      cookhub-dev:
+        ipv4_address: 172.20.128.2
+    ports:
+      - 80:8080
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+networks:
+  cookhub-dev:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
