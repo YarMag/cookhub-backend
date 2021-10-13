@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"net/http"
+	"cookhub.com/app/api/v1/test"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -22,9 +23,9 @@ func main() {
 		return context.HTML(http.StatusOK, fmt.Sprintf("Hello, CookHub!"))
 	})
 
-	server.GET("/v1/ping", func (context echo.Context) error {
-		return context.HTML(http.StatusOK, fmt.Sprintf("<h1>Test ping!</h1>"))
-	})
+	server.GET("/v1/ping", test.HandleTest)
+
+	server.GET("/v1/sum", test.HandleSum)
 
 	httpPort := os.Getenv("HTTP_PORT")
 	if httpPort == "" {

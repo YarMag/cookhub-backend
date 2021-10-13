@@ -8,6 +8,7 @@ COPY go.sum .
 RUN go mod download
 
 COPY *.go .
+COPY api ./api
 
 RUN go build -o /cookhub-rest-server
 
