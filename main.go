@@ -9,6 +9,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+var certFile = "/tmp/cert.pem"
+var keyFile = "/tmp/key.pem"
+
 func main() {
 	server := echo.New()
 
@@ -28,5 +31,6 @@ func main() {
 		httpPort = "8080"
 	}
 
-	server.Logger.Fatal(server.Start(":" + httpPort))
+	//server.Logger.Fatal(server.Start(":" + httpPort))
+	server.Logger.Fatal(server.StartTLS(":" + httpPort, certFile, keyFile))
 }

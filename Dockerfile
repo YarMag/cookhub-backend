@@ -1,23 +1,20 @@
-FROM golang:1.16-buster AS build
+FROM golang:1.16-alpine
 
 WORKDIR /app
 
 COPY go.mod .
 COPY go.sum .
+
 RUN go mod download
 
 COPY *.go .
 
 RUN go build -o /cookhub-rest-server
 
-FROM gcr.io/distroless/base-debian10
-
-WORKDIR /
-
-COPY --from=build /cookhub-rest-server /cookhub-rest-server
+ADD cert.pem /tmp/
+ADD key.pem /tmp/
+RUN ls /tmp && chmod 777 /tmp/key.pem
 
 EXPOSE 8080
-
-USER nonroot:nonroot
-
+	
 ENTRYPOINT ["/cookhub-rest-server"]
