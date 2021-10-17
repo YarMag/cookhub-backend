@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"log"
 	"net/http"
 	"cookhub.com/app/api/v1/test"
+	"cookhub.com/app/db"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -18,6 +20,11 @@ func main() {
 
 	server.Use(middleware.Logger())
 	server.Use(middleware.Recover())
+
+	_, err := db.InitStore()
+	if err != nil {
+		log.Fatalf("failed to initialize database: %s", err)
+	}
 
 	server.GET("/", func (context echo.Context) error {
 		return context.HTML(http.StatusOK, fmt.Sprintf("Hello, CookHub!"))

@@ -2,6 +2,9 @@ version: '3.8'
 
 services:
   cookhub-rest-server:
+    depends_on:
+      - cookhub-roach
+    env_file: .env
     build:
       context: .
     container_name: cookhub-rest-server
@@ -14,9 +17,42 @@ services:
       restart_policy:
         condition: on-failure
 
+  cookhub-roach:
+    image: cockroachdb/cockroach:latest-v20.1
+    container_name: cookhub-roach
+    hostname: db
+    networks:
+      cookhub-dev:
+        aliases:
+          - database
+    ports:
+      - 26257:26257
+      - 8080:8080
+    volumes:
+      - cookhub-roach:/cockroach/cockroach-data
+    command: start-single-node --insecure
+
+  cookhub-migrate:
+    container_name: cookhub-migrate
+    deploy:
+      restart_policy:   
+        condition: on-failure   
+        max_attempts: 3
+    image: migrate/migrate
+    depends_on:
+      - cookhub-roach
+    env_file:
+      - .env
+    volumes:
+      - ./db/migrations:/database
+    command: 
+      [ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "up"]
+    networks:
+      - cookhub-dev
+
+volumes:
+  cookhub-roach:
+
 networks:
   cookhub-dev:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
