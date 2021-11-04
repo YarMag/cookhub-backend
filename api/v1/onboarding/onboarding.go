@@ -7,8 +7,8 @@ import (
 )
 
 type Onboarding struct {
-	Title string `json: "title"`
-	Image string `json: "image"`
+	Title string `json:"title"`
+	Image string `json:"image"`
 }
 
 func GetOnboarding(context echo.Context) error {
@@ -19,11 +19,11 @@ func GetOnboarding(context echo.Context) error {
 		},
 		Onboarding{
 			Title: "Сохраняйте рецепты в избранное, создавайте новые и делитесь",
-			Image: "static/onboarding/1.jpg",
+			Image: "static/onboarding/2.jpg",
 		},
 		Onboarding{
 			Title: "Сканируйте холодильник и проверяйте наличие и срок годности продуктов",
-			Image: "static/onboarding/1.jpg",
+			Image: "static/onboarding/3.jpg",
 		},
 	}
 	return context.JSON(http.StatusOK, onboardingItems)
