@@ -10,6 +10,7 @@ RUN go mod download
 COPY *.go .
 COPY api ./api
 COPY db ./db
+COPY assets ./assets
 
 RUN go build -o /cookhub-rest-server
 

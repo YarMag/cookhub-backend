@@ -21,6 +21,8 @@ func main() {
 	server.Use(middleware.Logger())
 	server.Use(middleware.Recover())
 
+	server.Static("/static", "assets")
+
 	_, err := db.InitStore()
 	if err != nil {
 		log.Fatalf("failed to initialize database: %s", err)
