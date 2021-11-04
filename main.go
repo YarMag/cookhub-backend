@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"cookhub.com/app/api/v1/test"
 	"cookhub.com/app/db"
+	"cookhub.com/app/api/v1/onboarding"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -35,6 +36,8 @@ func main() {
 	server.GET("/v1/ping", test.HandleTest)
 
 	server.GET("/v1/sum", test.HandleSum)
+
+	server.GET("/v1/onboarding", onboarding.GetOnboarding)
 
 	httpPort := os.Getenv("HTTP_PORT")
 	if httpPort == "" {
