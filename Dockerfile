@@ -14,9 +14,9 @@ COPY assets ./assets
 
 RUN go build -o /cookhub-rest-server
 
-ADD cert.pem /tmp/
-ADD key.pem /tmp/
-RUN ls /tmp && chmod 777 /tmp/key.pem
+ADD server.crt /tmp/
+ADD server.key /tmp/
+RUN chmod 777 /tmp/server.key
 
 EXPOSE 8080
 	

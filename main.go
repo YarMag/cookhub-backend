@@ -13,8 +13,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-var certFile = "/tmp/cert.pem"
-var keyFile = "/tmp/key.pem"
+var certFile = "/tmp/server.crt"
+var keyFile = "/tmp/server.key"
 
 func main() {
 	server := echo.New()
