@@ -5,9 +5,11 @@ import (
 	"os"
 	"log"
 	"net/http"
+
 	"cookhub.com/app/api/v1/test"
 	"cookhub.com/app/db"
 	"cookhub.com/app/api/v1/onboarding"
+	"cookhub.com/app/third_party/gofirebase"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -24,10 +26,17 @@ func main() {
 
 	server.Static("/static", "assets")
 
-	_, err := db.InitStore()
+	_, err := gofirebase.SetupAuth()
+	if err != nil {
+		log.Fatalf("failed to initialize Firebase: %s", err)
+	}
+
+	_, err = db.InitStore()
 	if err != nil {
 		log.Fatalf("failed to initialize database: %s", err)
 	}
+
+	
 
 	server.GET("/", func (context echo.Context) error {
 		return context.HTML(http.StatusOK, fmt.Sprintf("Hello, CookHub!"))
