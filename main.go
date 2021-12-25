@@ -10,6 +10,7 @@ import (
 	"cookhub.com/app/db"
 	"cookhub.com/app/api/v1/onboarding"
 	"cookhub.com/app/third_party/gofirebase"
+	auth "cookhub.com/app/middleware/auth"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -26,9 +27,12 @@ func main() {
 
 	server.Static("/static", "assets")
 
-	_, err := gofirebase.SetupAuth()
+	authClient, err := gofirebase.SetupAuth()
 	if err != nil {
 		log.Fatalf("failed to initialize Firebase: %s", err)
+	}
+	firebaseAuth := auth.FirebaseAuthMiddleware { 
+		Client: authClient,
 	}
 
 	_, err = db.InitStore()
@@ -42,7 +46,7 @@ func main() {
 		return context.HTML(http.StatusOK, fmt.Sprintf("Hello, CookHub!"))
 	})
 
-	server.GET("/v1/ping", test.HandleTest)
+	server.GET("/v1/ping", firebaseAuth.HandleAuth(test.HandleTest))
 
 	server.GET("/v1/sum", test.HandleSum)
 

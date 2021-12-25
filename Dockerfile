@@ -3,6 +3,7 @@ FROM golang:1.16-alpine
 WORKDIR /app
 
 COPY third_party ./third_party
+COPY middleware ./middleware
 COPY go.mod .
 COPY go.sum .
 
