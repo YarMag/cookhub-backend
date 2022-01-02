@@ -47,6 +47,7 @@ services:
       - ./db/migrations:/database
     command: 
       [ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "up"]
+      #[ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "down", "-all"] - to drop
     networks:
       - cookhub-dev
 
