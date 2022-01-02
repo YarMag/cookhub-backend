@@ -3,7 +3,9 @@ module cookhub.com/app
 go 1.17
 
 require (
+	cookhub.com/app/api/v1/onboarding v0.0.0-00010101000000-000000000000
 	cookhub.com/app/middleware/auth v0.0.0-00010101000000-000000000000
+	cookhub.com/app/models v0.0.0-00010101000000-000000000000
 	cookhub.com/app/third_party/gofirebase v0.0.0-00010101000000-000000000000
 	github.com/cenkalti/backoff/v4 v4.1.1
 	github.com/cockroachdb/cockroach-go/v2 v2.2.1
@@ -54,3 +56,7 @@ require (
 replace cookhub.com/app/third_party/gofirebase => ./third_party/firebase
 
 replace cookhub.com/app/middleware/auth => ./middleware/auth
+
+replace cookhub.com/app/api/v1/onboarding => ./api/v1/onboarding
+
+replace cookhub.com/app/models => ./models

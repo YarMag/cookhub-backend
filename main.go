@@ -5,11 +5,13 @@ import (
 	"os"
 	"log"
 	"net/http"
+	"database/sql"
 
 	"cookhub.com/app/api/v1/test"
 	"cookhub.com/app/db"
 	"cookhub.com/app/api/v1/onboarding"
 	"cookhub.com/app/third_party/gofirebase"
+	"cookhub.com/app/models"
 	auth "cookhub.com/app/middleware/auth"
 
 	"github.com/labstack/echo/v4"
@@ -35,12 +37,11 @@ func main() {
 		Client: authClient,
 	}
 
-	_, err = db.InitStore()
+	var database *sql.DB
+	database, err = db.InitStore()
 	if err != nil {
 		log.Fatalf("failed to initialize database: %s", err)
 	}
-
-	
 
 	server.GET("/", func (context echo.Context) error {
 		return context.HTML(http.StatusOK, fmt.Sprintf("Hello, CookHub!"))
@@ -50,7 +51,9 @@ func main() {
 
 	server.GET("/v1/sum", test.HandleSum)
 
-	server.GET("/v1/onboarding", onboarding.GetOnboarding)
+	server.GET("/v1/onboarding", func (context echo.Context) error {
+		return onboarding.GetOnboarding(context, models.InitOnboarding(database))
+	})
 
 	httpPort := os.Getenv("HTTP_PORT")
 	if httpPort == "" {
