@@ -55,6 +55,13 @@ func main() {
 		return onboarding.GetOnboarding(context, models.InitOnboarding(database))
 	})
 
+	server.GET("/userAgreement", func (context echo.Context) error {
+		return context.HTML(http.StatusOK, "<h1>User agreement</h1><p>Will be there one day...</p>")
+	})
+	server.GET("/privacy", func (context echo.Context) error {
+		return context.HTML(http.StatusOK, "<h1>Privacy</h1><p>Will be there one day...</p>")
+	})
+
 	httpPort := os.Getenv("HTTP_PORT")
 	if httpPort == "" {
 		httpPort = "8080"
