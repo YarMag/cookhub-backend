@@ -33,9 +33,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to initialize Firebase: %s", err)
 	}
-	firebaseAuth := auth.FirebaseAuthMiddleware { 
-		Client: authClient,
-	}
+	authMiddleware := auth.InitAuthMiddleware(authClient)
 
 	var database *sql.DB
 	database, err = db.InitStore()
@@ -47,7 +45,7 @@ func main() {
 		return context.HTML(http.StatusOK, fmt.Sprintf("Hello, CookHub!"))
 	})
 
-	server.GET("/v1/ping", firebaseAuth.HandleAuth(test.HandleTest))
+	server.GET("/v1/ping", authMiddleware.HandleAuth(test.HandleTest))
 
 	server.GET("/v1/sum", test.HandleSum)
 
