@@ -7,13 +7,15 @@ CREATE TABLE IF NOT EXISTS cookhubdb.user
 	id VARCHAR(128) PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	image_url VARCHAR(300) NOT NULL
-)
+);
 
-ALTER TABLE IF EXISTS cookhubdb.recipe ADD COLUMN author_id VARCHAR(128) REFERENCES user(id) NOT NULL;
+ALTER TABLE IF EXISTS cookhubdb.recipe ADD COLUMN author_id VARCHAR(128) NOT NULL;
+ALTER TABLE IF EXISTS cookhubdb.recipe ADD CONSTRAINT fk_author FOREIGN KEY (author_id) REFERENCES cookhubdb.user(id) ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS cookhubdb.favorite_recipes
 (
-	user_id VARCHAR(128) REFERENCES user(id) NOT NULL,
-	recipe_id SERIAL REFERENCES recipse(id) NOT NULL,
-	INDEX(user_id, recipe_id)
+	user_id VARCHAR(128) REFERENCES cookhubdb.user(id) NOT NULL,
+	recipe_id SERIAL REFERENCES cookhubdb.recipe(id) NOT NULL
 );
+
+CREATE INDEX ON cookhubdb.favorite_recipes (user_id, recipe_id);

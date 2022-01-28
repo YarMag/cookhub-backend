@@ -57,7 +57,8 @@ services:
       - ./db/migrations:/database
     command: 
       [ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "up"]
-      #[ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "down", "-all"] - to drop
+      #[ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "down", "-all"] #- to drop
+      #[ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "force", "2"] #- migrate to specific version
     networks:
       - cookhub-dev
 
