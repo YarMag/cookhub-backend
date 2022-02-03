@@ -10,13 +10,14 @@ require (
 	github.com/cenkalti/backoff/v4 v4.1.1
 	github.com/cockroachdb/cockroach-go/v2 v2.2.1
 	github.com/golang-migrate/migrate/v4 v4.15.1
-	github.com/labstack/echo/v4 v4.6.1
+	github.com/labstack/echo/v4 v4.6.3
 )
 
 require (
 	cloud.google.com/go v0.99.0 // indirect
 	cloud.google.com/go/firestore v1.6.1 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
+	cookhub.com/app/api/v1/recipes v0.0.0-00010101000000-000000000000 // indirect
 	firebase.google.com/go v3.13.0+incompatible // indirect
 	github.com/census-instrumentation/opencensus-proto v0.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
@@ -31,9 +32,9 @@ require (
 	github.com/googleapis/gax-go/v2 v2.1.1 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
-	github.com/labstack/gommon v0.3.0 // indirect
+	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/lib/pq v1.10.0 // indirect
-	github.com/mattn/go-colorable v0.1.8 // indirect
+	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
@@ -58,5 +59,7 @@ replace cookhub.com/app/third_party/gofirebase => ./third_party/firebase
 replace cookhub.com/app/middleware/auth => ./middleware/auth
 
 replace cookhub.com/app/api/v1/onboarding => ./api/v1/onboarding
+
+replace cookhub.com/app/api/v1/recipes => ./api/v1/recipes
 
 replace cookhub.com/app/models => ./models

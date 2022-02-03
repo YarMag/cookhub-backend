@@ -10,6 +10,7 @@ import (
 	"cookhub.com/app/api/v1/test"
 	"cookhub.com/app/db"
 	"cookhub.com/app/api/v1/onboarding"
+	"cookhub.com/app/api/v1/recipes"
 	"cookhub.com/app/third_party/gofirebase"
 	"cookhub.com/app/models"
 	auth "cookhub.com/app/middleware/auth"
@@ -52,6 +53,10 @@ func main() {
 	server.GET("/v1/onboarding", func (context echo.Context) error {
 		return onboarding.GetOnboarding(context, models.InitOnboarding(database))
 	})
+
+	server.GET("/v1/recipes", authMiddleware.HandleAuth(func (context echo.Context) error {
+		return recipes.GetUserFeedRecipes(context, models.InitRecipes(database), models.InitUsers(database))	
+	}))
 
 	server.GET("/userAgreement", func (context echo.Context) error {
 		return context.HTML(http.StatusOK, "<h1>User agreement</h1><p>Will be there one day...</p>")
