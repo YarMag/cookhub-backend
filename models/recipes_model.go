@@ -11,7 +11,7 @@ type RecipeEntity struct {
 	CookTime int
 	Calories float32
 	Rating float32
-	AuthorId int
+	AuthorId string
 }
 
 type RecipesModel interface {
@@ -28,7 +28,7 @@ func InitRecipes(db *sql.DB) RecipesModel {
 }
 
 func (m recipesModelImpl) GetLastPublishedRecipes(limit int, offset int) ([]RecipeEntity, error) {
-	rows, err := m.database.Query("SELECT * FROM Recipes LIMIT ? OFFSET ?", limit, offset)
+	rows, err := m.database.Query("SELECT * FROM recipe LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, err
 	}
