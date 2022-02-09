@@ -1,1 +1,0 @@
-ALTER TABLE cookhubdb.user ALTER COLUMN image_url DROP NOT NULL;

@@ -23,7 +23,7 @@ func InitOnboarding(db *sql.DB) OnboardingModel {
 } 
 
 func (m onboardingModelImpl) All() ([]OnboardingEntity, error) {
-	rows, err := m.database.Query("SELECT * FROM Onboarding")
+	rows, err := m.database.Query("SELECT * FROM Onboardings")
 	if err != nil {
 		return nil, err
 	}

@@ -32,8 +32,8 @@ func (m usersModelImpl) GetRecipesAuthors(recipeIds []int) ([]UserEntity, error)
 	idsList, _ := json.Marshal(recipeIds)
 	idsListString := strings.Trim(string(idsList), "[]")
 
-	recipeAuthorsIdsQuery := "SELECT DISTINCT recipe.author_id FROM recipe WHERE recipe.id IN (" + idsListString + ")"
-	rows, err := m.database.Query("SELECT * FROM user WHERE user.id IN (" + recipeAuthorsIdsQuery + ")")
+	recipeAuthorsIdsQuery := "SELECT DISTINCT recipes.author_id FROM recipes WHERE recipes.id IN (" + idsListString + ")"
+	rows, err := m.database.Query("SELECT * FROM users WHERE users.id IN (" + recipeAuthorsIdsQuery + ")")
 	
 	if err != nil {
 		return nil, err

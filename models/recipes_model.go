@@ -28,7 +28,7 @@ func InitRecipes(db *sql.DB) RecipesModel {
 }
 
 func (m recipesModelImpl) GetLastPublishedRecipes(limit int, offset int) ([]RecipeEntity, error) {
-	rows, err := m.database.Query("SELECT * FROM recipe LIMIT ? OFFSET ?", limit, offset)
+	rows, err := m.database.Query("SELECT * FROM recipes LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -51,8 +51,8 @@ func (m recipesModelImpl) GetLastPublishedRecipes(limit int, offset int) ([]Reci
 
 func (m recipesModelImpl) GetUserFavoriteRecipes(uid string) ([]RecipeEntity, error) {
 	rows, err := m.database.Query("SELECT r.id, r.title, r.title_image_url, r.cooktime, r.calories, r.rating, r.author_id " + 
-								  "FROM recipe AS r JOIN favorite_recipes as fr ON r.id = fr.recipe_id " + 
-								  "JOIN user as u ON fr.author_id = u.id WHERE u.id = ?", uid)
+								  "FROM recipes AS r JOIN favorite_recipes as fr ON r.id = fr.recipe_id " + 
+								  "JOIN users as u ON fr.author_id = u.id WHERE u.id = ?", uid)
 	if err != nil {
 		return nil, err
 	}	
