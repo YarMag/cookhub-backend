@@ -16,6 +16,12 @@ type FirebaseAuthMiddleware struct {
 	Client *auth.Client
 }
 
+func InitAuthMiddleware(client *auth.Client) AuthMiddleware {
+	return FirebaseAuthMiddleware {
+		Client: client,
+	}
+}
+
 func (m FirebaseAuthMiddleware) HandleAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authToken := c.Request().Header.Get("Authorization")

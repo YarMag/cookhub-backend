@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  #cookhub-web-admin:
+  #  env_file: .env
+  #  build:
+  #    context: ./../cookhub-admin-web
+  #  container_name: cookhub-web-admin
+  #  networks:
+  #    - cookhub-dev
+  #  ports:
+  #    - 5000:5000
+
   cookhub-rest-server:
     depends_on:
       - cookhub-roach
@@ -47,7 +57,8 @@ services:
       - ./db/migrations:/database
     command: 
       [ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "up"]
-      #[ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "down", "-all"] - to drop
+      #[ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "down", "-all"] #- to drop
+      #[ "-path", "/database", "-database", "${MIGRATION_DB_URL}", "force", "1"] #- migrate to specific version
     networks:
       - cookhub-dev
 

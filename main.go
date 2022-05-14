@@ -10,6 +10,7 @@ import (
 	"cookhub.com/app/api/v1/test"
 	"cookhub.com/app/db"
 	"cookhub.com/app/api/v1/onboarding"
+	"cookhub.com/app/api/v1/recipes"
 	"cookhub.com/app/third_party/gofirebase"
 	"cookhub.com/app/models"
 	auth "cookhub.com/app/middleware/auth"
@@ -33,9 +34,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to initialize Firebase: %s", err)
 	}
-	firebaseAuth := auth.FirebaseAuthMiddleware { 
-		Client: authClient,
-	}
+	authMiddleware := auth.InitAuthMiddleware(authClient)
 
 	var database *sql.DB
 	database, err = db.InitStore()
@@ -47,13 +46,17 @@ func main() {
 		return context.HTML(http.StatusOK, fmt.Sprintf("Hello, CookHub!"))
 	})
 
-	server.GET("/v1/ping", firebaseAuth.HandleAuth(test.HandleTest))
+	server.GET("/v1/ping", authMiddleware.HandleAuth(test.HandleTest))
 
 	server.GET("/v1/sum", test.HandleSum)
 
 	server.GET("/v1/onboarding", func (context echo.Context) error {
 		return onboarding.GetOnboarding(context, models.InitOnboarding(database))
 	})
+
+	server.GET("/v1/recipes", authMiddleware.HandleAuth(func (context echo.Context) error {
+		return recipes.GetUserFeedRecipes(context, models.InitRecipes(database), models.InitUsers(database))	
+	}))
 
 	server.GET("/userAgreement", func (context echo.Context) error {
 		return context.HTML(http.StatusOK, "<h1>User agreement</h1><p>Will be there one day...</p>")
