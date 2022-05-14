@@ -1,15 +1,15 @@
 version: '3.8'
 
 services:
-  cookhub-web-admin:
-    env_file: .env
-    build:
-      context: ./../cookhub-admin-web
-    container_name: cookhub-web-admin
-    networks:
-      - cookhub-dev
-    ports:
-      - 5000:5000
+  #cookhub-web-admin:
+  #  env_file: .env
+  #  build:
+  #    context: ./../cookhub-admin-web
+  #  container_name: cookhub-web-admin
+  #  networks:
+  #    - cookhub-dev
+  #  ports:
+  #    - 5000:5000
 
   cookhub-rest-server:
     depends_on:

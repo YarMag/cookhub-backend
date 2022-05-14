@@ -123,5 +123,5 @@ func GetUserFeedRecipes(context echo.Context, recipesModel models.RecipesModel, 
 	}
 
 	// get recipes according to business logic rules
-	return context.JSON(http.StatusOK, components)
+	return context.JSON(http.StatusOK, UserFeedResponse { Components: components })
 }
