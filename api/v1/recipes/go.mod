@@ -5,6 +5,7 @@ go 1.17
 require github.com/labstack/echo/v4 v4.6.3
 
 require (
+	cookhub.com/app/api/entities v0.0.0-00010101000000-000000000000 // indirect
 	cookhub.com/app/models v0.0.0-00010101000000-000000000000 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
@@ -18,3 +19,5 @@ require (
 )
 
 replace cookhub.com/app/models => ./../../../models
+
+replace cookhub.com/app/api/entities => ./../../entities

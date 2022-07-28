@@ -5,32 +5,13 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"cookhub.com/app/models"
+	"cookhub.com/app/api/entities"
 )
-
-type AuthorShortItem struct {
-	Id string `json:"id"`
-	Name string `json:"name"`
-	AvatarUrl string `json:"avatar_url"`
-}
-
-type RecipeShortItem struct {
-	Id int `json:"id"`
-	Title string `json:"title"`
-	ImageUrl string `json:"image_url"`
-	Rating float32 `json:"rating"`
-	CookTime int `json:"cook_time"`
-	Calories float32 `json:"calories"`
-}
-
-type RecipeUserFeedItem struct {
-	Author AuthorShortItem `json:"author"`
-	Recipe RecipeShortItem `json:"recipe"`
-	IsFavorite bool `json:"is_favorite"`
-}
 
 type UserFeedComponent struct {
 	Type int `json:"type"` // 1 - recipe, 2...
-	FeedRecipe RecipeUserFeedItem `json:"feed_recipe,omitempty"`
+	FeedRecipe entities.RecipeUserFeedItem `json:"feed_recipe,omitempty"`
+	FeedCompilation entities.RecipeCompilationUserFeedItem `json:"feed_compilation,omitempty"`
 }
 
 type UserFeedResponse struct {
@@ -41,6 +22,26 @@ type recipeUserFeedRequestParams struct {
 	UserId string `header:"UUID"`
 	Offset int `query:"offset"`
 	Limit int `query:"limit"`
+}
+
+func mapRecipeShortItem(recipe models.RecipeEntity, isFavorite bool) entities.RecipeShortItem {
+	return entities.RecipeShortItem {
+		Id: recipe.Id,
+		Title: recipe.Title,
+		ImageUrl: recipe.TitleImageUrl,
+		Rating: recipe.Rating,
+		Calories: recipe.Calories,
+		CookTime: recipe.CookTime,
+		IsFavorite: isFavorite,
+	}
+}
+
+func mapAuthorShortItem(author models.UserEntity) entities.AuthorShortItem {
+	return entities.AuthorShortItem {
+		Id: author.Id,
+		Name: author.Name,
+		AvatarUrl: author.ImageUrl,
+	}
 }
 
 func GetUserFeedRecipes(context echo.Context, recipesModel models.RecipesModel, usersModel models.UsersModel) error {
@@ -113,12 +114,33 @@ func GetUserFeedRecipes(context echo.Context, recipesModel models.RecipesModel, 
 			}
 		}
 
-		component.FeedRecipe = RecipeUserFeedItem {
-			Author: AuthorShortItem { Id: recipeAuthor.Id, Name: recipeAuthor.Name, AvatarUrl: recipeAuthor.ImageUrl },
-			Recipe: RecipeShortItem { Id: recipe.Id, Title: recipe.Title, ImageUrl: recipe.TitleImageUrl, Rating: recipe.Rating, Calories: recipe.Calories, CookTime: recipe.CookTime },
-			IsFavorite: isFavorite,
+		component.FeedRecipe = entities.RecipeUserFeedItem {
+			Author: mapAuthorShortItem(recipeAuthor),
+			Recipe: mapRecipeShortItem(recipe, isFavorite),
 		}
 
+		components = append(components, component)
+	}
+
+	compilations, err := recipesModel.GetRecipesCompilations()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	for _, compilation := range compilations {
+		var component UserFeedComponent
+		component.Type = 2
+
+		var recipeItems []entities.RecipeShortItem
+		for _, compilationRecipe := range compilation.Recipes {
+			recipeItems = append(recipeItems, mapRecipeShortItem(compilationRecipe, false)) // TODO: implement real flag setting
+		}
+
+		component.FeedCompilation = entities.RecipeCompilationUserFeedItem {
+			Id: compilation.Id,
+			Title: compilation.Title,
+			Recipes: recipeItems,
+		}
 		components = append(components, component)
 	}
 

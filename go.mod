@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	cookhub.com/app/api/v1/onboarding v0.0.0-00010101000000-000000000000
+	cookhub.com/app/api/v1/recipes v0.0.0-00010101000000-000000000000
 	cookhub.com/app/middleware/auth v0.0.0-00010101000000-000000000000
 	cookhub.com/app/models v0.0.0-00010101000000-000000000000
 	cookhub.com/app/third_party/gofirebase v0.0.0-00010101000000-000000000000
@@ -17,7 +18,7 @@ require (
 	cloud.google.com/go v0.99.0 // indirect
 	cloud.google.com/go/firestore v1.6.1 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
-	cookhub.com/app/api/v1/recipes v0.0.0-00010101000000-000000000000 // indirect
+	cookhub.com/app/api/entities v0.0.0-00010101000000-000000000000 // indirect
 	firebase.google.com/go v3.13.0+incompatible // indirect
 	github.com/census-instrumentation/opencensus-proto v0.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
@@ -61,5 +62,7 @@ replace cookhub.com/app/middleware/auth => ./middleware/auth
 replace cookhub.com/app/api/v1/onboarding => ./api/v1/onboarding
 
 replace cookhub.com/app/api/v1/recipes => ./api/v1/recipes
+
+replace cookhub.com/app/api/entities => ./api/entities
 
 replace cookhub.com/app/models => ./models
