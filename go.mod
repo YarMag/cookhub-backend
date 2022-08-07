@@ -19,6 +19,8 @@ require (
 	cloud.google.com/go/firestore v1.6.1 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
 	cookhub.com/app/api/entities v0.0.0-00010101000000-000000000000 // indirect
+	cookhub.com/app/cache v0.0.0-00010101000000-000000000000 // indirect
+	cookhub.com/app/repositories v0.0.0-00010101000000-000000000000 // indirect
 	firebase.google.com/go v3.13.0+incompatible // indirect
 	github.com/census-instrumentation/opencensus-proto v0.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
@@ -29,6 +31,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/googleapis/gax-go/v2 v2.1.1 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
@@ -66,3 +69,7 @@ replace cookhub.com/app/api/v1/recipes => ./api/v1/recipes
 replace cookhub.com/app/api/entities => ./api/entities
 
 replace cookhub.com/app/models => ./models
+
+replace cookhub.com/app/repositories => ./repositories
+
+replace cookhub.com/app/cache => ./cache
