@@ -9,7 +9,7 @@ import (
 )
 
 type UserFeedComponent struct {
-	Type int `json:"type"` // 1 - recipe, 2...
+	Type int `json:"type"` // 1 - recipe, 2 - carousel, 3 - promo
 	FeedRecipe entities.RecipeUserFeedItem `json:"feed_recipe,omitempty"`
 	FeedCompilation entities.RecipeCompilationUserFeedItem `json:"feed_compilation,omitempty"`
 }

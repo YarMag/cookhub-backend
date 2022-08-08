@@ -34,16 +34,17 @@ func (rc *recipesCombiner)getComponents(limit int, offset int, userId string) ([
 		return nil, err
 	}
 
-	// promoComponents, err := rc.getPromoComponents(userId, limit, offset)
+	promoComponents, err := rc.getPromoComponents(userId, limit, offset)
 
-	// if err != nil {
-	// 	return nil, err
-	// }
+	if err != nil {
+		return nil, err
+	}
 
 	components := []UserFeedComponent{}
 	components = append(components, recipeComponents[0:1]...)
 	components = append(components, compilationComponents...)
-	components = append(components, recipeComponents[2:]...) // replace with promo when ready
+	components = append(components, promoComponents...)
+	components = append(components, recipeComponents[2:]...)
 
 	return components, nil
 }
@@ -126,7 +127,49 @@ func (rc *recipesCombiner)getCompilationsComponents(userId string, limit int, of
 }
 
 func (rc *recipesCombiner)getPromoComponents(userId string, limit int, offset int) ([]UserFeedComponent, error) {
-	return []UserFeedComponent{}, nil
+	// TODO: code smell, need to refactor with getRecipesComponents method
+	promos, err := rc.recipesModel.GetPromoRecipes(limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	var recipeIds []int
+	for _, recipe := range promos {
+		recipeIds = append(recipeIds, recipe.Id)
+	}
+	
+	// get authors for obtained recipes
+	var authors []models.UserEntity
+	authors, err = rc.usersModel.GetRecipesAuthors(recipeIds)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var components []UserFeedComponent
+	for _, promoRecipe := range promos {
+		var component UserFeedComponent
+		component.Type = 3
+
+		var recipeAuthor models.UserEntity
+		for _, author := range authors {
+			if author.Id == promoRecipe.AuthorId {
+				recipeAuthor = author
+				break
+			}
+		}
+
+		isFavorite, _ := rc.userRepository.IsRecipeFavorite(userId, &promoRecipe)
+
+		component.FeedRecipe = entities.RecipeUserFeedItem {
+			Author: rc.mapAuthorShortItem(recipeAuthor),
+			Recipe: rc.mapRecipeShortItem(promoRecipe, isFavorite),
+		}
+
+		components = append(components, component)
+	}
+
+	return components, nil
 }
 
 func (rc *recipesCombiner)mapRecipeShortItem(recipe models.RecipeEntity, isFavorite bool) entities.RecipeShortItem {
