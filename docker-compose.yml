@@ -13,7 +13,7 @@ services:
 
   cookhub-rest-server:
     depends_on:
-      - cookhub-roach
+      - cookhub-db
       - cookhub-redis
     env_file: .env
     build:
@@ -28,20 +28,22 @@ services:
       restart_policy:
         condition: on-failure
 
-  cookhub-roach:
-    image: cockroachdb/cockroach:latest-v20.1
-    container_name: cookhub-roach
+  cookhub-db:
+    image: postgres:latest
+    container_name: cookhub-db
+    env_file: .env
     hostname: db
     networks:
       cookhub-dev:
         aliases:
           - database
     ports:
-      - 26257:26257
+      - 5432:5432
       - 8080:8080
     volumes:
-      - cookhub-roach:/cockroach/cockroach-data
-    command: start-single-node --insecure
+      - ./db/startup_scripts:/docker-entrypoint-initdb.d
+      - ./db/data:/var/lib/postgresql/data
+    #command: start-single-node --insecure
 
   cookhub-migrate:
     container_name: cookhub-migrate
@@ -51,7 +53,7 @@ services:
         max_attempts: 3
     image: migrate/migrate
     depends_on:
-      - cookhub-roach
+      - cookhub-db
     env_file:
       - .env
     volumes:
@@ -74,9 +76,6 @@ services:
           - cookhub-redis
     ports:
       - 6379:6379
-
-volumes:
-  cookhub-roach:
 
 networks:
   cookhub-dev:

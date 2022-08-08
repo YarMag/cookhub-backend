@@ -44,7 +44,7 @@ func GetUserFeedRecipes(context echo.Context, recipesModel models.RecipesModel, 
 		queryParams.Offset = 1000
 	}
 
-	recipesCombiner := recipesCombiner { recipesModel: recipesModel, usersModel: usersModel }
+	recipesCombiner := newRecipesCombiner(recipesModel, usersModel)
 	components, err := recipesCombiner.getComponents(queryParams.Limit, queryParams.Offset, queryParams.UserId)
 	
 	if err != nil {

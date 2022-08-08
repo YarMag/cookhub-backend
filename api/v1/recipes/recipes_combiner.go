@@ -34,16 +34,16 @@ func (rc *recipesCombiner)getComponents(limit int, offset int, userId string) ([
 		return nil, err
 	}
 
-	promoComponents, err := rc.getPromoComponents(userId, limit, offset)
+	// promoComponents, err := rc.getPromoComponents(userId, limit, offset)
 
-	if err != nil {
-		return nil, err
-	}
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	components := []UserFeedComponent{}
-	components = append(components, recipeComponents...)
+	components = append(components, recipeComponents[0:1]...)
 	components = append(components, compilationComponents...)
-	components = append(components, promoComponents...)
+	components = append(components, recipeComponents[2:]...) // replace with promo when ready
 
 	return components, nil
 }
@@ -83,8 +83,8 @@ func (rc *recipesCombiner)getRecipesComponents(userId string, limit int, offset 
 			}
 		}
 
-		//isFavorite, _ := rc.userRepository.IsRecipeFavorite(userId, &recipe) // TODO: recheck, looks like it crashes
-		isFavorite := false
+
+		isFavorite, _ := rc.userRepository.IsRecipeFavorite(userId, &recipe)
 
 		component.FeedRecipe = entities.RecipeUserFeedItem {
 			Author: rc.mapAuthorShortItem(recipeAuthor),
