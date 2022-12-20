@@ -3,6 +3,8 @@ FROM golang:1.16-alpine
 WORKDIR /app
 
 COPY api ./api
+COPY cache ./cache
+COPY repositories ./repositories
 COPY db ./db
 COPY third_party ./third_party
 COPY middleware ./middleware

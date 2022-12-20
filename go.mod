@@ -4,20 +4,22 @@ go 1.17
 
 require (
 	cookhub.com/app/api/v1/onboarding v0.0.0-00010101000000-000000000000
+	cookhub.com/app/api/v1/recipes v0.0.0-00010101000000-000000000000
 	cookhub.com/app/middleware/auth v0.0.0-00010101000000-000000000000
 	cookhub.com/app/models v0.0.0-00010101000000-000000000000
 	cookhub.com/app/third_party/gofirebase v0.0.0-00010101000000-000000000000
 	github.com/cenkalti/backoff/v4 v4.1.1
-	github.com/cockroachdb/cockroach-go/v2 v2.2.1
-	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/labstack/echo/v4 v4.6.3
+	github.com/lib/pq v1.10.0
 )
 
 require (
 	cloud.google.com/go v0.99.0 // indirect
 	cloud.google.com/go/firestore v1.6.1 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
-	cookhub.com/app/api/v1/recipes v0.0.0-00010101000000-000000000000 // indirect
+	cookhub.com/app/api/entities v0.0.0-00010101000000-000000000000 // indirect
+	cookhub.com/app/cache v0.0.0-00010101000000-000000000000 // indirect
+	cookhub.com/app/repositories v0.0.0-00010101000000-000000000000 // indirect
 	firebase.google.com/go v3.13.0+incompatible // indirect
 	github.com/census-instrumentation/opencensus-proto v0.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
@@ -28,18 +30,16 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.1.1 // indirect
-	github.com/hashicorp/errwrap v1.0.0 // indirect
-	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
-	github.com/lib/pq v1.10.0 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
-	go.uber.org/atomic v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20211013171255-e13a2654a71e // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
@@ -62,4 +62,10 @@ replace cookhub.com/app/api/v1/onboarding => ./api/v1/onboarding
 
 replace cookhub.com/app/api/v1/recipes => ./api/v1/recipes
 
+replace cookhub.com/app/api/entities => ./api/entities
+
 replace cookhub.com/app/models => ./models
+
+replace cookhub.com/app/repositories => ./repositories
+
+replace cookhub.com/app/cache => ./cache
