@@ -128,6 +128,7 @@ func (rc *recipesCombiner)getCompilationsComponents(userId string, limit int, of
 
 func (rc *recipesCombiner)getPromoComponents(userId string, limit int, offset int) ([]UserFeedComponent, error) {
 	// TODO: code smell, need to refactor with getRecipesComponents method
+	// it almost duplicates this method, but with minor differences for promo (data source, id)
 	promos, err := rc.recipesModel.GetPromoRecipes(limit, offset)
 	if err != nil {
 		return nil, err
