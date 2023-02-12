@@ -20,7 +20,40 @@ type RecipeCompilationEntity struct {
 	Recipes []RecipeEntity
 }
 
+type IngredientEntity struct {
+	Id int
+	Name string
+}
+
+type UnitEntity struct {
+	Id int
+	Name string
+	Count float32
+}
+
+type RecipeIngredientEntity struct {
+	Ingredient IngredientEntity
+	Unit UnitEntity
+}
+
+type StepEntity struct {
+	Desc string
+}
+
+type RecipeMediaEntity struct {
+	Url string
+	Type int
+}
+
+type RecipeFullInfoEntity struct {
+	Recipe RecipeEntity
+	Ingredients []RecipeIngredientEntity
+	Steps []StepEntity
+	Medias []RecipeMediaEntity
+}
+
 type RecipesModel interface {
+	GetFullRecipeInfo(id int) (*RecipeFullInfoEntity, error)
 	GetLastPublishedRecipes(limit int, offset int) ([]RecipeEntity, error)
 	GetUserFavoriteRecipes(uid string) ([]RecipeEntity, error)
 	GetPromoRecipes(limit int, offset int) ([]RecipeEntity, error)
@@ -126,6 +159,76 @@ func (m *recipesModelImpl) GetUserFavoriteRecipes(uid string) ([]RecipeEntity, e
 	}
 
 	return recipeItems, nil
+}
+
+func (m *recipesModelImpl) GetFullRecipeInfo(id int) (*RecipeFullInfoEntity, error) {
+	var recipeEntity RecipeFullInfoEntity
+
+	recipeRows, err := m.database.Query("SELECT * FROM recipes WHERE recipes.id = $1 LIMIT 1", id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for recipeRows.Next() {
+		var recipe RecipeEntity
+		err := recipeRows.Scan(&recipe.Id, &recipe.Title, &recipe.CookTime, &recipe.Calories, &recipe.Rating, &recipe.TitleImageUrl, &recipe.AuthorId)
+		if err != nil {
+			return nil, err
+		}
+		recipeEntity.Recipe = recipe
+	}
+
+	stepsRows, err := m.database.Query("SELECT recipes_steps.description FROM recipes_steps WHERE recipes_steps.recipe_id = $1 ORDER BY recipes_steps.step", id)
+	if err != nil {
+		return nil, err
+	}
+
+	var steps []StepEntity
+	for stepsRows.Next() {
+		var step StepEntity
+		err := stepsRows.Scan(&step.Desc)
+		if err != nil {
+			return nil, err
+		}
+		steps = append(steps, step)
+	}
+	recipeEntity.Steps = steps
+
+	ingredientRows, err := m.database.Query("SELECT i.name, u.name, ri.amount FROM recipes_ingredients AS ri JOIN ingredients AS i ON ri.ingredient_id = i.id JOIN units AS u ON u.id = ri.unit_id WHERE ri.recipe_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	var ingredients []RecipeIngredientEntity
+	for ingredientRows.Next() {
+		var ingredient RecipeIngredientEntity
+		err := ingredientRows.Scan(&ingredient.Ingredient.Name, &ingredient.Unit.Name, &ingredient.Unit.Count)
+		if err != nil {
+			return nil, err
+		}
+		ingredients = append(ingredients, ingredient)
+	}
+	recipeEntity.Ingredients = ingredients
+
+	mediasRows, err := m.database.Query("SELECT m.url, m.type FROM recipe_medias AS m WHERE m.recipe_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	var medias []RecipeMediaEntity
+	for mediasRows.Next() {
+		var media RecipeMediaEntity
+		err := mediasRows.Scan(&media.Url, &media.Type)
+		if err != nil {
+			return nil, err
+		}
+		medias = append(medias, media)
+	}
+	recipeEntity.Medias = medias
+
+	return &recipeEntity, nil
+	
 }
 
 func (m *recipesModelImpl) GetRecipesCompilations() ([]RecipeCompilationEntity, error) {
