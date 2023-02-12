@@ -1,0 +1,27 @@
+CREATE TABLE units
+(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR (100) NOT NULL
+);
+
+CREATE TABLE ingredients
+(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR (100) NOT NULL
+);
+
+CREATE TABLE recipes_ingredients
+(
+	id SERIAL PRIMARY KEY,
+	recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+	ingredient_id SERIAL NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
+	unit_id SERIAL NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+	amount DECIMAL NOT NULL
+);
+
+CREATE TABLE recipe_medias
+(
+	recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+	url VARCHAR(300) NOT NULL,
+	type INT NOT NULL#1 - image, 2 - video
+);

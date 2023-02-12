@@ -58,6 +58,10 @@ func main() {
 		return recipes.GetUserFeedRecipes(context, models.InitRecipes(database), models.InitUsers(database))	
 	}))
 
+	server.GET("/v1/recipe", authMiddleware.HandleAuth(func (context echo.Context) error {
+		return recipes.GetRecipe(context, models.InitRecipes(database), models.InitUsers(database))
+	}))
+
 	server.GET("/userAgreement", func (context echo.Context) error {
 		return context.HTML(http.StatusOK, "<h1>User agreement</h1><p>Will be there one day...</p>")
 	})
