@@ -91,6 +91,6 @@ CREATE TABLE recipe_medias
 (
 	recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
 	url VARCHAR(300) NOT NULL,
-	type INT NOT NULL#1 - image, 2 - video
+	type INT NOT NULL --1 - image, 2 - video
 );
 
