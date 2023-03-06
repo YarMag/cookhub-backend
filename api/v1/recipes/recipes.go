@@ -88,6 +88,15 @@ func mapToFullRecipe(recipe *models.RecipeFullInfoEntity) entities.RecipeFullIte
 	for _, step := range recipe.Steps {
 		stepItems = append(stepItems, entities.StepItem {
 			Desc: step.Desc,
+			Title: step.Title,
+		})
+	}
+
+	var foodValueItems []entities.FoodValueItem
+	for _, fv := range recipe.FoodValues {
+		foodValueItems = append(foodValueItems, entities.FoodValueItem {
+			Name: fv.Name,
+			Value: fv.Value,
 		})
 	}
 
@@ -97,10 +106,12 @@ func mapToFullRecipe(recipe *models.RecipeFullInfoEntity) entities.RecipeFullIte
 		Rating: recipe.Recipe.Rating,
 		CookTime: recipe.Recipe.CookTime,
 		Calories: recipe.Recipe.Calories,
+		Description: recipe.Recipe.Description,
 		IsFavorite: false, // TODO: method is hidden in recipesCombiner, need to extract
 		MediaUrls: urls,
 		Ingredients: ingredientItems,
 		Steps: stepItems,
+		FoodValues: foodValueItems,
 	}
 }
 

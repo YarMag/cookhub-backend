@@ -28,6 +28,7 @@ CREATE TABLE recipes
 	rating DECIMAL(2,1),
 	title_image_url VARCHAR(100) DEFAULT NULL,
 	author_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	description VARCHAR(1000) NOT NULL,
 	CONSTRAINT CHK_rating CHECK (rating >= 0 AND rating <= 5)
 );
 
@@ -35,6 +36,7 @@ CREATE TABLE recipes_steps
 (
 	id SERIAL PRIMARY KEY,
 	step INT NOT NULL,
+	title VARCHAR(100) NOT NULL,
 	description VARCHAR(500) NOT NULL,
 	recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE
 );
@@ -92,5 +94,14 @@ CREATE TABLE recipe_medias
 	recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
 	url VARCHAR(300) NOT NULL,
 	type INT NOT NULL --1 - image, 2 - video
+);
+
+CREATE TABLE recipe_food_values
+(
+	id SERIAL PRIMARY KEY,
+	proteins DECIMAL NOT NULL,
+	fats DECIMAL NOT NULL,
+	carbohydrates DECIMAL NOT NULL,
+	recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE
 );
 

@@ -11,6 +11,7 @@ type RecipeEntity struct {
 	CookTime int
 	Calories float32
 	Rating float32
+	Description string
 	AuthorId string
 }
 
@@ -37,7 +38,13 @@ type RecipeIngredientEntity struct {
 }
 
 type StepEntity struct {
+	Title string
 	Desc string
+}
+
+type FoodValueEntity struct {
+	Name string
+	Value float32
 }
 
 type RecipeMediaEntity struct {
@@ -49,6 +56,7 @@ type RecipeFullInfoEntity struct {
 	Recipe RecipeEntity
 	Ingredients []RecipeIngredientEntity
 	Steps []StepEntity
+	FoodValues []FoodValueEntity
 	Medias []RecipeMediaEntity
 }
 
@@ -131,7 +139,7 @@ func (m *recipesModelImpl)GetPromoRecipes(limit int, offset int) ([]RecipeEntity
 }
 
 func (m *recipesModelImpl) GetUserFavoriteRecipes(uid string) ([]RecipeEntity, error) {
-	rows, err := m.database.Query("SELECT r.id, r.title, r.title_image_url, r.cooktime, r.calories, r.rating, r.author_id " + 
+	rows, err := m.database.Query("SELECT r.id, r.title, r.title_image_url, r.cooktime, r.calories, r.rating, r.author_id, r.description " + 
 								  "FROM recipes AS r JOIN favorite_recipes as fr ON r.id = fr.recipe_id " + 
 								  "JOIN users as u ON fr.user_id = u.id WHERE u.id = $1", uid)
 	if err != nil {
@@ -145,7 +153,7 @@ func (m *recipesModelImpl) GetUserFavoriteRecipes(uid string) ([]RecipeEntity, e
 		var recipe RecipeEntity
 		var titleImageUrl sql.NullString
 		err := rows.Scan(&recipe.Id, &recipe.Title, &titleImageUrl, &recipe.CookTime, 
-			&recipe.Calories, &recipe.Rating, &recipe.AuthorId)
+			&recipe.Calories, &recipe.Rating, &recipe.AuthorId, &recipe.Description)
 		if err != nil {
 			return nil, err
 		}
@@ -172,14 +180,15 @@ func (m *recipesModelImpl) GetFullRecipeInfo(id int) (*RecipeFullInfoEntity, err
 
 	for recipeRows.Next() {
 		var recipe RecipeEntity
-		err := recipeRows.Scan(&recipe.Id, &recipe.Title, &recipe.CookTime, &recipe.Calories, &recipe.Rating, &recipe.TitleImageUrl, &recipe.AuthorId)
+		err := recipeRows.Scan(&recipe.Id, &recipe.Title, &recipe.CookTime, &recipe.Calories, 
+							   &recipe.Rating, &recipe.TitleImageUrl, &recipe.AuthorId, &recipe.Description)
 		if err != nil {
 			return nil, err
 		}
 		recipeEntity.Recipe = recipe
 	}
 
-	stepsRows, err := m.database.Query("SELECT recipes_steps.description FROM recipes_steps WHERE recipes_steps.recipe_id = $1 ORDER BY recipes_steps.step", id)
+	stepsRows, err := m.database.Query("SELECT recipes_steps.description, recipes_steps.title FROM recipes_steps WHERE recipes_steps.recipe_id = $1 ORDER BY recipes_steps.step", id)
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +196,7 @@ func (m *recipesModelImpl) GetFullRecipeInfo(id int) (*RecipeFullInfoEntity, err
 	var steps []StepEntity
 	for stepsRows.Next() {
 		var step StepEntity
-		err := stepsRows.Scan(&step.Desc)
+		err := stepsRows.Scan(&step.Desc, &step.Title)
 		if err != nil {
 			return nil, err
 		}
@@ -227,6 +236,26 @@ func (m *recipesModelImpl) GetFullRecipeInfo(id int) (*RecipeFullInfoEntity, err
 	}
 	recipeEntity.Medias = medias
 
+	foodValuesRows, err := m.database.Query("SELECT fv.proteins, fv.fats, fv.carbohydrates FROM recipe_food_values AS fv WHERE fv.recipe_id = $1 LIMIT 1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	var foodValues []FoodValueEntity
+	for foodValuesRows.Next() {
+		var proteinsValue float32
+		var fatsValue float32
+		var carbohydratesValue float32
+		err := foodValuesRows.Scan(&proteinsValue, &fatsValue, &carbohydratesValue)
+		if err != nil {
+			return nil, err
+		}
+		foodValues = append(foodValues, FoodValueEntity { Name: "proteins", Value: proteinsValue })
+		foodValues = append(foodValues, FoodValueEntity { Name: "fats", Value: fatsValue })
+		foodValues = append(foodValues, FoodValueEntity { Name: "carbohydrates", Value: carbohydratesValue })
+	}
+	recipeEntity.FoodValues = foodValues
+
 	return &recipeEntity, nil
 	
 }
@@ -260,7 +289,7 @@ func (m *recipesModelImpl) GetRecipesCompilations() ([]RecipeCompilationEntity, 
 }
 
 func (m *recipesModelImpl) getRecipesForCompilation(id int) ([]RecipeEntity, error) {
-	rows, err := m.database.Query("SELECT r.id, r.title, r.title_image_url, r.cooktime, r.calories, r.rating, r.author_id " + 
+	rows, err := m.database.Query("SELECT r.id, r.title, r.title_image_url, r.cooktime, r.calories, r.rating, r.author_id, r.description " + 
 		"FROM recipes AS r JOIN recipe_compilations_recipes AS rcr ON r.id = rcr.id_recipe WHERE rcr.id_compilation = $1", id)
 
 	if err != nil {
@@ -274,7 +303,7 @@ func (m *recipesModelImpl) getRecipesForCompilation(id int) ([]RecipeEntity, err
 		var recipe RecipeEntity
 		var titleImageUrl sql.NullString
 		err := rows.Scan(&recipe.Id, &recipe.Title, &titleImageUrl, &recipe.CookTime, 
-			&recipe.Calories, &recipe.Rating, &recipe.AuthorId)
+			&recipe.Calories, &recipe.Rating, &recipe.AuthorId, &recipe.Description)
 		if err != nil {
 			return nil, err
 		}
