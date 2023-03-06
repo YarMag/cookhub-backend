@@ -1,0 +1,12 @@
+CREATE TABLE recipe_food_values
+(
+	id SERIAL PRIMARY KEY,
+	proteins DECIMAL NOT NULL,
+	fats DECIMAL NOT NULL,
+	carbohydrates DECIMAL NOT NULL,
+	recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE
+);
+
+ALTER TABLE recipes ADD COLUMN description VARCHAR(1000) NOT NULL DEFAULT '';
+
+ALTER TABLE recipes_steps ADD COLUMN title VARCHAR(100) NOT NULL DEFAULT 'Step';

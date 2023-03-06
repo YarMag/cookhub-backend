@@ -18,6 +18,7 @@ type IngredientItem struct {
 }
 
 type StepItem struct {
+	Title string `json:"title"`
 	Desc string `json:"desc"`
 }
 
@@ -26,14 +27,21 @@ type MediaItem struct {
 	Url string `json:"url"`
 }
 
+type FoodValueItem struct {
+	Name string `json:"name"`
+	Value float32 `json:"value"`
+}
+
 type RecipeFullItem struct {
 	Id int `json:"id"`
 	Title string `json:"title"`
 	Rating float32 `json:"rating"`
+	Description string `json:"description"`
 	CookTime int `json:"cook_time"`
 	Calories float32 `json:"calories"`
 	IsFavorite bool `json:"is_favorite"`
 	MediaUrls []MediaItem `json:"medias"`
 	Ingredients []IngredientItem `json:"ingredients"`
 	Steps []StepItem `json:"steps"`
+	FoodValues []FoodValueItem `json:"food_values"`
 }
