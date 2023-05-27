@@ -10,7 +10,7 @@ require (
 	cookhub.com/app/third_party/gofirebase v0.0.0-00010101000000-000000000000
 	github.com/cenkalti/backoff/v4 v4.1.1
 	github.com/labstack/echo/v4 v4.6.3
-	github.com/lib/pq v1.10.0
+	github.com/lib/pq v1.10.9
 )
 
 require (
@@ -19,6 +19,7 @@ require (
 	cloud.google.com/go/storage v1.10.0 // indirect
 	cookhub.com/app/api/entities v0.0.0-00010101000000-000000000000 // indirect
 	cookhub.com/app/cache v0.0.0-00010101000000-000000000000 // indirect
+	cookhub.com/app/db v0.0.0-00010101000000-000000000000 // indirect
 	cookhub.com/app/repositories v0.0.0-00010101000000-000000000000 // indirect
 	firebase.google.com/go v3.13.0+incompatible // indirect
 	github.com/census-instrumentation/opencensus-proto v0.2.1 // indirect
@@ -57,6 +58,8 @@ require (
 replace cookhub.com/app/third_party/gofirebase => ./third_party/firebase
 
 replace cookhub.com/app/middleware/auth => ./middleware/auth
+
+replace cookhub.com/app/db => ./db
 
 replace cookhub.com/app/api/v1/onboarding => ./api/v1/onboarding
 

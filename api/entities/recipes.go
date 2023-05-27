@@ -44,4 +44,4 @@ type RecipeFullItem struct {
 	Ingredients []IngredientItem `json:"ingredients"`
 	Steps []StepItem `json:"steps"`
 	FoodValues []FoodValueItem `json:"food_values"`
-}
+} 

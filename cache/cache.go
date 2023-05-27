@@ -31,6 +31,15 @@ func GetString(obj string, key string) (string, error) {
 	return value, err
 }
 
+func GetFloat64(obj string, key string) (float64, error) {
+	conn := redisPool.Get()
+	defer conn.Close()
+
+	value, err := redis.Float64(conn.Do("HGET", obj, key))
+
+	return value, err
+}
+
 func GetInt64(obj string, key string) (int64, error) {
 	conn := redisPool.Get()
 	defer conn.Close()
@@ -59,6 +68,15 @@ func SetString(obj string, key string, value string) error {
 }
 
 func SetInt64(obj string, key string, value int64) error {
+	conn := redisPool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("HSET", obj, key, value)
+
+	return err
+}
+
+func SetFloat64(obj string, key string, value float64) error {
 	conn := redisPool.Get()
 	defer conn.Close()
 

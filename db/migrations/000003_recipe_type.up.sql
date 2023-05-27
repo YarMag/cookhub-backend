@@ -1,0 +1,3 @@
+ALTER TABLE recipes ADD COLUMN recipe_type INT NOT NULL DEFAULT 2;
+
+ALTER TABLE recipe_food_values ADD COLUMN price FLOAT(2) NOT NULL DEFAULT 100.0;
