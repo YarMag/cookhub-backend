@@ -3,6 +3,7 @@ package island_algorithm
 import (
 	"log"
 	. "ga_operators"
+	"reflect"
 )
 
 type executorMigrationServiceInfo struct {
@@ -38,7 +39,7 @@ func (master *SimpleIslandMasterImpl)StartOptimization(params GeneticAlgorithmPa
 		master.executorsIdsMap = make(map[string]int)
 		availableCriterionTypes := []OptimizationCriterionType{ MinPrice, MaxProteins, MinCookingTime }
 		for i := 0; i < params.IslandsCount; i++ {
-			newExecutor, _ := master.ExecutorFactory.CreateExecutor(availableCriterionTypes[i % len(availableCriterionTypes)])
+			newExecutor, _ := master.ExecutorFactory.CreateExecutor(availableCriterionTypes[i % len(availableCriterionTypes)], params.RecipesIds)
 			executors = append(executors, newExecutor)
 			master.executorsIdsMap[newExecutor.GetId()] = i
 			//log.Printf("IslandMaster::Created executor with id %s", newExecutor.GetId())
@@ -110,9 +111,121 @@ func (master *SimpleIslandMasterImpl)StartOptimization(params GeneticAlgorithmPa
 		// сформировать Парето-фронт
 		// отправить результат в master.optimizationResultOutput
 
+		criteria := make([]CriterionEvaluator, len(availableCriterionTypes))
+		for i := 0; i < len(criteria); i++ {
+			criteria[i] = executors[i].GetCriterion()
+		}
+
+		paretoFront := master.getBestParetoRangedGroup(totalChromosomes, criteria)
+		uniqueSolutions := master.filterUnique(paretoFront)
+
 		master.optimizationResultOutput<-GeneticAlgorithmResult {
-			BestSolutions: totalChromosomes[0:11],
+			BestSolutions: uniqueSolutions,
 		}
 	}(params)
 	return master.optimizationResultOutput
+}
+
+func (master *SimpleIslandMasterImpl)getBestParetoRangedGroup(solutions []GeneticAlgorithmChromosome, criteria []CriterionEvaluator) []GeneticAlgorithmChromosome {
+	solutionsCount := len(solutions)
+	criteriaCount := len(criteria)
+
+	// формируем начальные условия, по которым считаем доминируемость
+	valuesMatrix := make([][]float32, solutionsCount)
+	for i := 0; i < solutionsCount; i++ {
+		valuesMatrix[i] = make([]float32, criteriaCount)
+		for j := 0; j < criteriaCount; j++ {
+			valuesMatrix[i][j] = criteria[j].EvaluateChromosome(solutions[i])
+		}
+	}
+
+	chromosomeCriterionValuesCache := make(map[string][]float32)
+
+	// задаем квадратную булеву матрицу отношений хромосом, чтобы вычислить недоминируемые решения
+	relationshipsMatrix := make([][]bool, solutionsCount)
+	for i := 0; i < solutionsCount; i++ {
+		relationshipsMatrix[i] = make([]bool, solutionsCount)
+
+		iCriterionValues, ok := chromosomeCriterionValuesCache[solutions[i].GetId()]
+		if !ok {
+			iCriterionValues = make([]float32, criteriaCount)
+			for index, criterion := range criteria {
+				iCriterionValues[index] = criterion.EvaluateChromosome(solutions[i])
+			}
+			chromosomeCriterionValuesCache[solutions[i].GetId()] = iCriterionValues
+		}
+
+		for j := 0; j < solutionsCount; j++ {
+			if i == j {
+				continue
+			}
+			jCriterionValues, ok := chromosomeCriterionValuesCache[solutions[j].GetId()]
+			if !ok {
+				jCriterionValues = make([]float32, criteriaCount)
+				for index, criterion := range criteria {
+					jCriterionValues[index] = criterion.EvaluateChromosome(solutions[j])
+				}
+				chromosomeCriterionValuesCache[solutions[j].GetId()] = jCriterionValues
+			}
+
+			comparisonResults := make([]int, criteriaCount)
+			hasGreaterCriterionValue := false
+			isNonDominated := false
+			for k := 0; k < criteriaCount; k++ {
+				comparisonResults[k] = criteria[k].CompareChromosomesFitnessValues(iCriterionValues[k], jCriterionValues[k])
+				if comparisonResults[k] == 1 {
+					hasGreaterCriterionValue = true
+				} else if comparisonResults[k] == -1 {
+					isNonDominated = true
+					break
+				} // ignore 0, equal values don't matter
+			}
+			
+			if !isNonDominated && hasGreaterCriterionValue {
+				relationshipsMatrix[i][j] = true
+			}
+		}
+	}
+
+	// ищем столбцы, где все значения false - это будут недоминируемые решения, составляющие первую группу парето-фронта
+	paretoFrontIndices := make([]int, 0)
+	for j := 0; j < solutionsCount; j++ {
+		hasDominatedValues := false
+		for i := 0; i < solutionsCount; i++ {
+			if relationshipsMatrix[i][j] == true {
+				hasDominatedValues = true
+				break
+			}
+		}
+		if !hasDominatedValues {
+			paretoFrontIndices = append(paretoFrontIndices, j)
+		}
+	}
+	log.Printf("IslandMaster::Detected %d solutions in pareto front", len(paretoFrontIndices))
+
+	bestParetoChromosomeGroup := make([]GeneticAlgorithmChromosome, 0)
+	for _, paretoSolutionIndex := range paretoFrontIndices {
+		bestParetoChromosomeGroup = append(bestParetoChromosomeGroup, solutions[paretoSolutionIndex])
+	}
+
+	return bestParetoChromosomeGroup
+}
+
+func (master *SimpleIslandMasterImpl)filterUnique(solutions []GeneticAlgorithmChromosome) []GeneticAlgorithmChromosome {
+	solutionsCount := len(solutions)
+	log.Printf("IslandMaster::Start filtering %d chromosomes", solutionsCount)
+	uniqueSolutions := make([]GeneticAlgorithmChromosome, 0)
+	shouldBeDiscardedFlags := make([]bool, solutionsCount)
+	for i := 0; i < solutionsCount; i++ {
+		if !shouldBeDiscardedFlags[i] {
+			uniqueSolutions = append(uniqueSolutions, solutions[i])
+		}
+		for j := i+1; j < solutionsCount; j++ {
+			if reflect.DeepEqual(solutions[i].GetValues(), solutions[j].GetValues()) {
+				shouldBeDiscardedFlags[j] = true
+			}
+		} 
+	}
+	log.Printf("IslandMaster::Finish filtering - obtained %d unique chromosomes", len(uniqueSolutions))
+	return uniqueSolutions
 }

@@ -4,7 +4,10 @@ import (
 	. "ga_operators"
 	"sort"
 	"log"
+	"math"
 )
+
+const float64EqualityThreshold float64 = 1e-9
 
 type MinPriceCriterionEvaluator struct {
 	recipeInfoExtractor RecipeInfoExtractor
@@ -49,6 +52,17 @@ func (criterion *MinPriceCriterionEvaluator)evaluateChromosome(chromosome Geneti
 
 func (criterion *MinPriceCriterionEvaluator)EvaluateChromosome(chromosome GeneticAlgorithmChromosome) float32 {
 	return float32(criterion.evaluateChromosome(chromosome))
+}
+
+func (criterion *MinPriceCriterionEvaluator)CompareChromosomesFitnessValues(firstFV float32, secondFV float32) int {
+	diff := float64(firstFV - secondFV)
+	if diff > float64EqualityThreshold {
+		return 1
+	} else if math.Abs(diff) < float64EqualityThreshold {
+		return 0
+	} else {
+		return -1
+	}
 }
 
 type MaxProteinsCriterionEvaluator struct {
@@ -97,6 +111,17 @@ func (criterion *MaxProteinsCriterionEvaluator)EvaluateChromosome(chromosome Gen
 	return criterion.evaluateChromosome(chromosome)
 }
 
+func (criterion *MaxProteinsCriterionEvaluator)CompareChromosomesFitnessValues(firstFV float32, secondFV float32) int {
+	diff := float64(firstFV - secondFV)
+	if diff > float64EqualityThreshold {
+		return -1
+	} else if math.Abs(diff) < float64EqualityThreshold {
+		return 0
+	} else {
+		return 1
+	}
+}
+
 type MinCookingTimeCriterionEvaluator struct {
 	recipeInfoExtractor RecipeInfoExtractor
 	recipeIds []int
@@ -125,6 +150,17 @@ func (criterion *MinCookingTimeCriterionEvaluator)RangePopulation(population []G
 
 func (criterion *MinCookingTimeCriterionEvaluator)EvaluateChromosome(chromosome GeneticAlgorithmChromosome) float32 {
 	return float32(criterion.evaluateChromosome(chromosome))
+}
+
+func (criterion *MinCookingTimeCriterionEvaluator)CompareChromosomesFitnessValues(firstFV float32, secondFV float32) int {
+	diff := float64(firstFV - secondFV)
+	if diff > float64EqualityThreshold {
+		return 1
+	} else if math.Abs(diff) < float64EqualityThreshold {
+		return 0
+	} else {
+		return -1
+	}
 }
 
 func (criterion *MinCookingTimeCriterionEvaluator)evaluateChromosome(chromosome GeneticAlgorithmChromosome) int {

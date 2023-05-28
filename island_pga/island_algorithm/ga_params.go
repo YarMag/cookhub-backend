@@ -21,6 +21,7 @@ const (
 type CriterionEvaluator interface {
 	RangePopulation([]GeneticAlgorithmChromosome)
 	EvaluateChromosome(GeneticAlgorithmChromosome) float32
+	CompareChromosomesFitnessValues(float32, float32) int // 1 - greater, 0 - equal, -1 - lesser
 }
 
 type OptimizationCriteriaFactory interface {
@@ -73,6 +74,7 @@ type IslandExecutor interface {
 	SetupMigrationChannel(chan IslandExecutorResult) (chan IslandExecutorResult, error)
 	IsReadyToWork() bool
 	GetId() string
+	GetCriterion() CriterionEvaluator
 }
 
 type IslandExecutorFactory interface {

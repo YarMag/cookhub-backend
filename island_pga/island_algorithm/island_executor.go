@@ -21,6 +21,10 @@ func NewSimpleIslandExecutorImpl(criterion CriterionEvaluator) IslandExecutor {
 	}
 }
 
+func (executor *SimpleIslandExecutorImpl)GetCriterion() CriterionEvaluator {
+	return executor.criterion
+}
+
 func (executor *SimpleIslandExecutorImpl)RunCalculations(params IslandExecutorParams) (error) {
 	go func(params IslandExecutorParams) {
 		// генерация начальной популяции
