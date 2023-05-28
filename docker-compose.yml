@@ -28,6 +28,20 @@ services:
       restart_policy:
         condition: on-failure
 
+  cookhub-ga-optimizer:
+    depends_on:
+      - cookhub-db
+      - cookhub-redis
+    env_file: .env
+    build:
+      context: ./island_pga
+    container_name: cookhub-ga-optimizer
+    hostname: cookhub-ga-optimizer
+    networks:
+      - cookhub-dev
+    ports:
+      - 90:8090
+
   cookhub-db:
     image: postgres:latest
     container_name: cookhub-db
