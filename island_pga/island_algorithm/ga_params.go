@@ -20,10 +20,11 @@ const (
 */
 type CriterionEvaluator interface {
 	RangePopulation([]GeneticAlgorithmChromosome)
+	EvaluateChromosome(GeneticAlgorithmChromosome) float32
 }
 
 type OptimizationCriteriaFactory interface {
-	CreateCriterion(OptimizationCriterionType) CriterionEvaluator
+	CreateCriterion(OptimizationCriterionType, []int) CriterionEvaluator
 }
 
 /*
@@ -75,7 +76,7 @@ type IslandExecutor interface {
 }
 
 type IslandExecutorFactory interface {
-	CreateExecutor(OptimizationCriterionType) (IslandExecutor, error)
+	CreateExecutor(OptimizationCriterionType, []int) (IslandExecutor, error)
 }
 
 /*

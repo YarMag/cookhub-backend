@@ -150,7 +150,7 @@ func (executor *SimpleIslandExecutorImpl)generateInitialPopulation(params Island
 			}
 			lowerBound = upperBound
 		}
-		chromosomes[chromosomeIndex] = &SimpleChromosome {Values: chromosomeValues}
+		chromosomes[chromosomeIndex] = NewSimpleChromosome(chromosomeValues)
 	}
 
 	return chromosomes

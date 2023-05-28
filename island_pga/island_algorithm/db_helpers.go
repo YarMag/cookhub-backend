@@ -92,7 +92,7 @@ func (extractor *RecipeInfoExtractor)GetRecipeCookingTime(id int) (int, error) {
 		return int(cachedValue), nil
 	}
 
-	recipesRows, err := extractor.Database.Query("SELECT recipes.cooktime FROM recipes WHERE rcipes.id = $1", id)
+	recipesRows, err := extractor.Database.Query("SELECT recipes.cooktime FROM recipes WHERE recipes.id = $1", id)
 	if err != nil {
 		return 0, err
 	}
