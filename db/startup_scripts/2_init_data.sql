@@ -154,3 +154,6 @@ INSERT INTO recipe_medias VALUES (20, 'https://static.1000.menu/res/380/img/cont
 INSERT INTO recipes_ingredients VALUES (DEFAULT, 20, 37, 1, 300), (DEFAULT, 20, 36, 3, 1), (DEFAULT, 20, 28, 1, 20), (DEFAULT, 20, 13, 5, 2), (DEFAULT, 20, 16, 6, 0);
 INSERT INTO recipes_steps VALUES (DEFAULT, 1, 'Нарезаем овощи', 'Подготовьте чашу для приготовления салата. Нарежьте в неё огурец. Достаточно разрезать в длину на 2 или 4 части, а затем просто порезать его на кусочки. Точно так же, четвертинками, нарежьте и редис.', 20), (DEFAULT, 2, 'Заправляем', 'Следом добавьте немного сметаны. По вкусу посолите салат. В качестве заправки можно использовать не только сметану. Попробуйте заменить её натуральным йогуртом или оливковым маслом.', 20);
 INSERT INTO recipe_food_values VALUES (DEFAULT, 10, 30, 30, 60, 20);
+
+INSERT INTO recipe_compilations VALUES (2, 'Рекомендовано для вас');
+INSERT INTO recipe_compilations_recipes VALUES (3, 14, 2), (4, 20, 2), (5, 10, 2), (6, 15, 2);
