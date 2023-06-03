@@ -26,9 +26,10 @@ CREATE TABLE recipes
 	cooktime INT NOT NULL,
 	calories DECIMAL NOT NULL,
 	rating DECIMAL(2,1),
-	title_image_url VARCHAR(100) DEFAULT NULL,
+	title_image_url VARCHAR(200) DEFAULT NULL,
 	author_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 	description VARCHAR(1000) NOT NULL,
+	recipe_type INT NOT NULL, -- 1 - breakfast, 2 - lunch, 3 - dinner, 4 - snack
 	CONSTRAINT CHK_rating CHECK (rating >= 0 AND rating <= 5)
 );
 
@@ -102,6 +103,7 @@ CREATE TABLE recipe_food_values
 	proteins DECIMAL NOT NULL,
 	fats DECIMAL NOT NULL,
 	carbohydrates DECIMAL NOT NULL,
+	price INT NOT NULL,
 	recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE
 );
 
