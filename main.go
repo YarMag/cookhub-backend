@@ -11,6 +11,7 @@ import (
 	"cookhub.com/app/db"
 	"cookhub.com/app/api/v1/onboarding"
 	"cookhub.com/app/api/v1/recipes"
+	"cookhub.com/app/api/v1/search"
 	"cookhub.com/app/third_party/gofirebase"
 	"cookhub.com/app/models"
 	auth "cookhub.com/app/middleware/auth"
@@ -67,6 +68,10 @@ func main() {
 	})
 	server.GET("/privacy", func (context echo.Context) error {
 		return context.HTML(http.StatusOK, "<h1>Privacy</h1><p>Will be there one day...</p>")
+	})
+
+	server.GET("/search", func (context echo.Context) error {
+		return search.GetSearchResults(context, models.NewSearchModel(database), models.InitRecipes(database))
 	})
 
 	httpPort := os.Getenv("HTTP_PORT")
